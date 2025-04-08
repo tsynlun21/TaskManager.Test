@@ -1,0 +1,54 @@
+services:
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq:4.0-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  postgres:
+    image: postgres:17.3
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+  mongo:
+    image: mongo:latest
+    
+    restart: always
+    ports:
+      - "27017:27017"
+  task.manager.api:
+    build:
+      context: .
+      dockerfile: Microservices/TaskManager/TaskManager.API/Dockerfile
+    restart: on-failure
+    environment:
+      CONNECTION_STRING: Host=postgres;Port=5432;Username=postgres;password=admin;database=finstar-task-manager
+      RABBITMQ_HOST: rabbit
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+    ports:
+      - "5001:5001"
+    depends_on:
+      - rabbit
+      - postgres
+  task.logger.api:
+    build:
+      context: .
+      dockerfile: Microservices/TaskLogger/TaskLogger.API/Dockerfile
+    restart: on-failure
+    environment:
+      MONGO_CONNECTION_STRING: mongodb://mongo:27017
+      MONGO_DB_NAME: TaskLoggsDB
+      MONGO_DB_COLLECTION: TaskLogs
+      RABBITMQ_HOST: rabbit
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+    ports:
+      - "5002:5002"
+    depends_on:
+      - rabbit
+      - mongo

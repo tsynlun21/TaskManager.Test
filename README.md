@@ -1,14 +1,14 @@
 # Задача 1
 # API для простого управления задачами пользователя(Task Management Service)
 
-## Стек
-ASP .NET 8
-RabbitMq
-Masstransit
-PostgreSQL
-MongoDB
-Quartz
-XUnit
+### Стек
+* ASP .NET 8
+* RabbitMq
+* Masstransit
+* PostgreSQL
+* MongoDB
+* Quartz
+* XUnit
 
 Запускается через docker-compose, там же разворачивются все бд, и кролик.
 
